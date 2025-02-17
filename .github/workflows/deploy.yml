@@ -1,0 +1,30 @@
+name: Deploy to GitHub Pages
+
+on:
+  push:
+    branches:
+      - main  # Runs when changes are pushed to the 'main' branch
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest  # This runs on GitHub's Linux servers (not your local machine)
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v3  # Fetches the latest code from GitHub
+
+      - name: Install Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'  # Use the latest stable Node.js version
+
+      - name: Install Dependencies
+        run: npm install  # Installs Tailwind, PostCSS, etc.
+
+      - name: Build Tailwind CSS
+        run: npx tailwindcss -i ./src/styles/tailwind.css -o ./dist/styles/main.css --minify
+
+      - name: Deploy to GitHub Pages
+        uses: JamesIves/github-pages-deploy-action@v4
+        with:
+          branch: gh-pages  # Deploys to the 'gh-pages' branch
+          folder: dist  # Deploys only the 'dist' folder (contains built files)
